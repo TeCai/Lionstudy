@@ -38,7 +38,7 @@ def download_and_extract(task, data_dir):
     print("\tCompleted!")
 
 
-def data_loader():
+def data_loader(): # 你这tm返回的是dataset不是loader，但是没事，就是要dataset， loader要自己调
     ds = load_dataset("mariosasko/glue", "cola") #adjust to the uploaded file or use this
     tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
     ds = ds.map(lambda example: tokenizer(example["sentence"]), batched=True)
@@ -47,8 +47,28 @@ def data_loader():
         )
     return ds
 
-if __name__ == '__main__':
-    ds=data_loader()
-    Train=ds["train"]
-    Test=ds["test"]
-    Validation=ds["validation"]
+# if __name__ == '__main__':
+#     ds=data_loader()
+#     Train=ds["train"]
+#     Test=ds["test"]
+#     Validation=ds["validation"]
+
+def get_torch_dataset(tokenizer : AutoTokenizer,which = "cola", **kwargs):
+
+    """
+    tokenizer: A transformer.AutoTokenizer class
+    which: which GLUE dataset to use
+    **kwargs: key word arguments passed to tokenizer
+    """
+    ds = load_dataset("mariosasko/glue", which) #adjust to the uploaded file or use this
+    # tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+    ds = ds.map(lambda example: tokenizer(example["sentence"], **kwargs), batched=True, batch_size=2048)
+    ds = ds.rename_column("label", "labels")
+    if which == "cola":
+        ds.set_format(
+            type="torch", columns=["input_ids", "token_type_ids", "attention_mask", "labels"],
+            )
+    else:
+        raise NotImplementedError
+
+    return ds["train"],ds["test"],ds["validation"]
