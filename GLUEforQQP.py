@@ -64,10 +64,11 @@ def get_torch_dataset(tokenizer : AutoTokenizer,which = "qqp", **kwargs):
     # tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
     ds = ds.map(lambda example: tokenizer(example["question1"], example["question2"], **kwargs), batched=True, batch_size=2048) 
     #batch size 你看着调 瑞
-    # ds = ds.rename_column("label", "labels")
+
+    ds = ds.rename_column("label", "labels")
     if which == "qqp":
         ds.set_format(
-            type="torch", columns=["input_ids", "token_type_ids", "attention_mask", "label"],
+            type="torch", columns=["input_ids", "token_type_ids", "attention_mask", "labels"],
             )
         
     return ds["train"],ds["test"],ds["validation"]
