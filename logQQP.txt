@@ -1,0 +1,1 @@
+2023-03-24 15:15:34,974 - INFO - Start training for: sche:linear,opt:Lion,batchsize:16, lr:3e-07
