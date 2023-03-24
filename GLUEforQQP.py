@@ -70,5 +70,6 @@ def get_torch_dataset(tokenizer : AutoTokenizer,which = "qqp", **kwargs):
         ds.set_format(
             type="torch", columns=["input_ids", "token_type_ids", "attention_mask", "labels"],
             )
-        
-    return ds["train"],ds["test"],ds["validation"]
+
+
+    return ds["train"],ds["validation"],ds["test"]
